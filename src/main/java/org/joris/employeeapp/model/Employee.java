@@ -8,26 +8,26 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Employee {
  
-    private String id;
+    private int id;
     private String name;
-    private String partnerId;
+    private int partnerId;
  
     // This default constructor is required if there are other constructors.
     public Employee() {
  
     }
  
-    public Employee(String id, String name, String partnerId) {
+    public Employee(int id, String name, int partnerId) {
         this.id = id;
         this.name = name;
         this.partnerId = partnerId;
     }
  
-    public String getId() {
+    public int getId() {
         return id;
     }
  
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
     }
  
@@ -39,11 +39,11 @@ public class Employee {
         this.name = name;
     }
  
-    public String getPartnerId() {
+    public int getPartnerId() {
         return partnerId;
     }
  
-    public void setPartnerId(String partnerId) {
+    public void setPartnerId(int partnerId) {
         this.partnerId = partnerId;
     }
  

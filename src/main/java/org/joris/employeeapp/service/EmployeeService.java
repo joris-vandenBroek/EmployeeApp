@@ -9,9 +9,12 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.joris.employeeapp.dao.EmployeeDAO;
+import org.joris.employeeapp.dao.ValidationException;
 import org.joris.employeeapp.model.Employee;
  
 @Path("/employees")
@@ -21,41 +24,72 @@ public class EmployeeService {
     // /contextPath/servletPath/employees
     @GET
     @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-    public List<Employee> getEmployees_JSON() {
-        List<Employee> listOfEmployees = EmployeeDAO.getAllEmployees();
-        return listOfEmployees;
+    public Response getEmployees_JSON() {
+    	try {
+    		List<Employee> listOfEmployees = EmployeeDAO.getAllEmployees();
+    		GenericEntity<List<Employee>> entity
+    	        = new GenericEntity<List<Employee>>(listOfEmployees) {};
+            return Response.ok().entity(entity).build();
+        } catch (ValidationException e) 	{
+        	return Response.ok().entity(createValidationMessage(e)).build();
+		}
     }
+
  
     // URI:
     // /contextPath/servletPath/employees/{id}
     @GET
     @Path("/{id}")
     @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-    public Employee getEmployee(@PathParam("id") String id) {
-        return EmployeeDAO.getEmployee(id);
+    public Response getEmployee(@PathParam("id") int id) {
+    	try {
+	        Employee employee =  EmployeeDAO.getEmployee(id);
+	        return Response.ok().entity(employee).build();
+	    } catch (ValidationException e) 	{
+	    	return Response.ok().entity(createValidationMessage(e)).build();
+		}
     }
  
     // URI:
     // /contextPath/servletPath/employees
     @POST
     @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-    public Employee addEmployee(Employee emp) {
-        return EmployeeDAO.addEmployee(emp);
+    public Response addEmployee(Employee emp) {
+    	try {
+            Employee employee =  EmployeeDAO.addEmployee(emp);
+            return Response.ok().entity(employee).build();
+        } catch (ValidationException e) 	{
+        	return Response.ok().entity(createValidationMessage(e)).build();
+		}
     }
  
     // URI:
     // /contextPath/servletPath/employees
     @PUT
     @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-    public Employee updateEmployee(Employee emp) {
-        return EmployeeDAO.updateEmployee(emp);
+    public Response updateEmployee(Employee emp) {
+    	try {
+            Employee employee =  EmployeeDAO.updateEmployee(emp);
+            return Response.ok().entity(employee).build();
+        } catch (ValidationException e) 	{
+        	return Response.ok().entity(createValidationMessage(e)).build();
+		}
     }
  
     @DELETE
     @Path("/{id}")
     @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-    public void deleteEmployee(@PathParam("id") String id) {
-        EmployeeDAO.deleteEmployee(id);
+    public Response deleteEmployee(@PathParam("id") int id) {
+    	try {
+            EmployeeDAO.deleteEmployee(id);
+            return Response.ok().entity("{\"message:\": \"Employee with id " + id + " has been deleted\"}").build();
+        } catch (ValidationException e) 	{
+        	return Response.ok().entity(createValidationMessage(e)).build();
+		}
     }
  
+	private String createValidationMessage(ValidationException e) {
+		return "{\"message:\": \"" + e.getMessage() + "\"}";
+	}
+
 }
