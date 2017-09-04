@@ -1,5 +1,6 @@
 package org.joris.employeeapp.service;
 
+import java.util.Collections;
 import java.util.List;
 
 import javax.ws.rs.DELETE;
@@ -9,6 +10,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -24,9 +26,15 @@ public class EmployeeService {
     // /contextPath/servletPath/employees
     @GET
     @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
-    public Response getEmployees_JSON() {
+    public Response getEmployees_JSON(@QueryParam("sortBy") String sortBy) {
     	try {
     		List<Employee> listOfEmployees = EmployeeDAO.getAllEmployees();
+    		if("id".equals(sortBy)) {
+    			Collections.sort(listOfEmployees, Employee.IdComparator);
+    		}
+    		if("name".equals(sortBy)) {
+    			Collections.sort(listOfEmployees, Employee.NameComparator);
+    		}
     		GenericEntity<List<Employee>> entity
     	        = new GenericEntity<List<Employee>>(listOfEmployees) {};
             return Response.ok().entity(entity).build();
